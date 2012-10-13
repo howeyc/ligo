@@ -18,7 +18,9 @@ func IntAdd(vals ...interface{}) interface{} {
 
 func main() {
 	list1 := ligo.List(1, 2, 3, 5)
+	vec1 := ligo.Vector(1, 2, 3, 5)
 	fmt.Printf("Add: %d\n", ligo.Reduce(IntAdd, list1))
+	fmt.Printf("Add: %d\n", ligo.Reduce(IntAdd, vec1))
 }
 ```
 

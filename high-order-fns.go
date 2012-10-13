@@ -88,9 +88,9 @@ func Append(seqs ...Seq) Seq {
 // RevAppend constructs a copy of seq, but with elements in reverse order.
 // It then appends the tail to that reversed list and returns the result.
 func RevAppend(seq, tail Seq) Seq {
-    if seq == nil {
-        return tail
-    }
+	if seq == nil {
+		return tail
+	}
 	return RevAppend(seq.Rest(), cons(seq.First(), tail))
 }
 

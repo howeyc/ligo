@@ -9,6 +9,10 @@ type vec struct {
 	vector []interface{}
 }
 
+func (v *vec) slice() []interface{} {
+	return v.vector
+}
+
 // First returns the value of the first
 func (v *vec) First() interface{} {
 	if v != nil && len(v.vector) > 0 {
@@ -46,12 +50,13 @@ func consVector(val interface{}, rest *vec) Seq {
 func Vector(a ...interface{}) Seq {
 	if len(a) == 0 {
 		return nil
-	} else if len(a) == 1 {
-		return consVector(a[0], nil)
 	}
-	start := cons(a[len(a)-1], nil)
-	for i := len(a) - 2; i >= 0; i-- {
-		start = cons(a[i], start)
-	}
-	return start
+	newvector := make([]interface{}, 0)
+	newvector = append(newvector, a...)
+	return &vec{newvector}
+}
+
+// MakeSeq returns a sequence from a given Go array slice
+func MakeSeq(a []interface{}) Seq {
+	return Vector(a...)
 }

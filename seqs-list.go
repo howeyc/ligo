@@ -27,7 +27,7 @@ func (p *pair) Rest() Seq {
 }
 
 func consPair(val interface{}, rest *pair) Seq {
-		return &pair{val, rest}
+	return &pair{val, rest}
 }
 
 // List is a convinience function to build a list from its arguments

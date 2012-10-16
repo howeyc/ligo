@@ -49,52 +49,66 @@ func MapCar(fn MultiArgFn, seqs ...Seq) Seq {
 	return cons(fn(seqvals...), nil)
 }
 
-// Get a copy of a Seq.
-// Only the seq structure is copied, the elements of the resulting
-// seq are the same as the corresponding elements of the given seq.
-func CopySeq(seq Seq) Seq {
-	if seq == nil {
-		return nil
-	} else if seq.Rest() == nil {
-		return cons(seq.First(), nil)
-	}
-	return cons(seq.First(), CopySeq(seq.Rest()))
-}
-
-// Append returns a new seq that is the concatenation of the copies.
-// Supplied seqs are left unchanged.
-//      listboth := lisp.Append(list1, list2)
-func Append(seqs ...Seq) Seq {
-	nextseq := make([]Seq, 0)
-	if len(seqs) == 0 {
-		return nil
-	} else if len(seqs) == 1 {
-		if seqs[0].Rest() != nil {
-			nextseq = append(nextseq, seqs[0].Rest())
-			nextseq = append(nextseq, seqs[1:]...)
-			return cons(seqs[0].First(), Append(nextseq...))
+// Every tests elements of sequences for satisfaction of a given fn. The
+// first argument to fn is an element of the first sequence; each succeding
+// argument is an element of a succedding sequence.
+//
+// Every returns false as soon as any invocation of fn returns false.
+// If the end of a sequence is reached, Every returns true.
+func Every(fn MultiArgFn, seqs ...Seq) bool {
+	nextseqs := make([]Seq, 0)
+	seqvals := make([]interface{}, 0)
+	for _, seq := range seqs {
+		if seq != nil {
+			seqvals = append(seqvals, seq.First())
+			nextseqs = append(nextseqs, seq.Rest())
 		}
-		return cons(seqs[0].First(), nil)
 	}
-	if seqs[0].Rest() != nil {
-		nextseq = append(nextseq, Append(seqs[0].Rest()))
-		nextseq = append(nextseq, seqs[1:]...)
-		return cons(seqs[0].First(), Append(nextseq...))
+	if len(seqvals) == 0 || len(seqvals) < len(seqs) {
+		return true
 	}
-	nextseq = append(nextseq, seqs[1:]...)
-	return cons(seqs[0].First(), Append(nextseq...))
+	return fn(seqvals...) != false && Every(fn, nextseqs...) == true
 }
 
-// RevAppend constructs a copy of seq, but with elements in reverse order.
-// It then appends the tail to that reversed list and returns the result.
-func RevAppend(seq, tail Seq) Seq {
-	if seq == nil {
-		return tail
+// Some tests elements of sequences for satisfaction of a given fn. The
+// first argument to fn is an element of the first sequence; each succeding
+// argument is an element of a succedding sequence.
+//
+// Some returns true as soon as any invocation of fn returns non-false.
+// If the end of a sequence is reached, Some returns false.
+func Some(fn MultiArgFn, seqs ...Seq) bool {
+	nextseqs := make([]Seq, 0)
+	seqvals := make([]interface{}, 0)
+	for _, seq := range seqs {
+		if seq != nil {
+			seqvals = append(seqvals, seq.First())
+			nextseqs = append(nextseqs, seq.Rest())
+		}
 	}
-	return RevAppend(seq.Rest(), cons(seq.First(), tail))
+	if len(seqvals) == 0 || len(seqvals) < len(seqs) {
+		return false
+	}
+	if fn(seqvals...) != false {
+		return true
+	}
+	return Some(fn, nextseqs...)
 }
 
-// Reverse constructs a copy of seq, but with elements in reverse order.
-func Reverse(seq Seq) Seq {
-	return RevAppend(seq, nil)
+// EqualTest returns true if the values of the sequences are equal
+// based on equalityFn and the sequences are of the same length.
+func EqualTest(equalityFn MultiArgFn, seqs ...Seq) bool {
+	nextseqs := make([]Seq, 0)
+	seqvals := make([]interface{}, 0)
+	for _, seq := range seqs {
+		if seq != nil {
+			seqvals = append(seqvals, seq.First())
+			nextseqs = append(nextseqs, seq.Rest())
+		}
+	}
+	if len(seqvals) == 0 {
+		return true
+	} else if len(seqvals) < len(seqs) {
+		return false
+	}
+	return equalityFn(seqvals...) == true && EqualTest(equalityFn, nextseqs...)
 }

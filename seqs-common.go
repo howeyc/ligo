@@ -6,6 +6,7 @@
 package ligo
 
 import (
+	"fmt"
 	"reflect"
 	"unsafe"
 )
@@ -29,16 +30,16 @@ func cons(val interface{}, rest Seq) Seq {
 		return consVector(val, nil)
 	}
 	vrest := reflect.ValueOf(rest).Elem()
+	restaddr := vrest.UnsafeAddr()
+	restptr := unsafe.Pointer(restaddr)
 
 	// Pair??
 	if vrest.Type().String() == "ligo.pair" {
-		return &pair{val, rest}
+		return consPair(val, (*pair)(restptr))
 	}
 
 	// Vec??
 	if vrest.Type().String() == "ligo.vec" {
-		restaddr := vrest.UnsafeAddr()
-		restptr := unsafe.Pointer(restaddr)
 		return consVector(val, (*vec)(restptr))
 	}
 
@@ -66,4 +67,37 @@ func GetSlice(seq Seq) []interface{} {
 		cell = cell.Rest()
 	}
 	return vector
+}
+
+func printSeq(seq Seq) (ret string) {
+	if seq == nil {
+		return ""
+	}
+
+	ret = fmt.Sprintf("%v", seq.First())
+	cell := seq.Rest()
+	for cell != nil {
+		ret += fmt.Sprintf(" %v", cell.First())
+		cell = cell.Rest()
+	}
+	return ret
+}
+
+func valEquality(vals ...interface{}) interface{} {
+	var result bool = true
+	prevVal := vals[0]
+	for _, val := range vals {
+		if reflect.DeepEqual(prevVal, val) != true {
+			result = false
+			break
+		}
+		prevVal = val
+	}
+	return result
+}
+
+// Equal returns true if the values of the sequences are equal
+// (reflect.DeepEqual) and the sequences are of the same length.
+func Equal(seqs ...Seq) bool {
+	return EqualTest(valEquality, seqs...)
 }

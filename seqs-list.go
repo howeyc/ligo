@@ -10,6 +10,13 @@ type pair struct {
 	cdr Seq
 }
 
+func (p *pair) String() (ret string) {
+	ret = "("
+	ret += printSeq(p)
+	ret += ")"
+	return ret
+}
+
 // First returns the value of the pair
 func (p *pair) First() interface{} {
 	if p != nil {
@@ -20,7 +27,11 @@ func (p *pair) First() interface{} {
 
 // Rest returns the cdr of the pair
 func (p *pair) Rest() Seq {
-	if p != nil {
+	// From what I can see it looks that if you pass nil as rest to 
+	// consPair, Go will pass a pointer to an empty pair struct in its
+	// place. So in some cases instead of cdr being nil, it points to a pair
+	// with a nil car.
+	if p != nil && p.cdr != nil && p.cdr.First() != nil {
 		return p.cdr
 	}
 	return nil
@@ -34,10 +45,8 @@ func consPair(val interface{}, rest *pair) Seq {
 func List(a ...interface{}) Seq {
 	if len(a) == 0 {
 		return nil
-	} else if len(a) == 1 {
-		return consPair(a[0], nil)
 	}
-	start := cons(a[len(a)-1], nil)
+	start := consPair(a[len(a)-1], nil)
 	for i := len(a) - 2; i >= 0; i-- {
 		start = cons(a[i], start)
 	}

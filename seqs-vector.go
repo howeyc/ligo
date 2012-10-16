@@ -9,6 +9,13 @@ type vec struct {
 	vector []interface{}
 }
 
+func (v *vec) String() (ret string) {
+	ret = "["
+	ret += printSeq(v)
+	ret += "]"
+	return ret
+}
+
 func (v *vec) slice() []interface{} {
 	return v.vector
 }

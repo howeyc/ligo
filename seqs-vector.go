@@ -53,7 +53,7 @@ func consVector(val interface{}, rest *vec) Seq {
 	return rest.pushNew(val)
 }
 
-// Vector is a convinience function to build a vector from its arguments
+// Vector is a function to build a vector sequence from its arguments
 func Vector(a ...interface{}) Seq {
 	if len(a) == 0 {
 		return nil
@@ -61,9 +61,4 @@ func Vector(a ...interface{}) Seq {
 	newvector := make([]interface{}, 0)
 	newvector = append(newvector, a...)
 	return &vec{newvector}
-}
-
-// MakeSeq returns a sequence from a given Go array slice
-func MakeSeq(a []interface{}) Seq {
-	return Vector(a...)
 }

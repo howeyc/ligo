@@ -46,8 +46,8 @@ func cons(val interface{}, rest Seq) Seq {
 	return nil
 }
 
-// GetSlice returns the given seq as a Go array slice
-func GetSlice(seq Seq) []interface{} {
+// ToSlice returns the given seq as a Go array slice
+func ToSlice(seq Seq) []interface{} {
 	if seq == nil {
 		return nil
 	}

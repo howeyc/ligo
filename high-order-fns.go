@@ -147,5 +147,5 @@ func RemoveIfNot(fn MultiArgFn, seq Seq) Seq {
 
 // Filter returns a sequence with elements that satisfy fn
 func Filter(fn MultiArgFn, seq Seq) Seq {
-    return RemoveIfNot(fn, seq)
+	return RemoveIfNot(fn, seq)
 }

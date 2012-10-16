@@ -80,7 +80,7 @@ func Take(seq Seq, n uint) Seq {
 	return SubSeq(seq, 0, n)
 }
 
-// Drop forst n elements of a seq
+// Drop first n elements of a seq
 func Drop(seq Seq, n uint) Seq {
 	if n == 0 || seq == nil {
 		return seq
@@ -90,5 +90,5 @@ func Drop(seq Seq, n uint) Seq {
 
 // Get the length of a given seq
 func Length(seq Seq) int {
-	return len(GetSlice(seq))
+	return len(ToSlice(seq))
 }

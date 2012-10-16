@@ -41,7 +41,7 @@ func consPair(val interface{}, rest *pair) Seq {
 	return &pair{val, rest}
 }
 
-// List is a convinience function to build a list from its arguments
+// List is a function to build a list sequence from its arguments
 func List(a ...interface{}) Seq {
 	if len(a) == 0 {
 		return nil

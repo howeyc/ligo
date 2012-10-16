@@ -112,3 +112,40 @@ func EqualTest(equalityFn MultiArgFn, seqs ...Seq) bool {
 	}
 	return equalityFn(seqvals...) == true && EqualTest(equalityFn, nextseqs...)
 }
+
+// RemoveIf returns a sequence from which elements that satisfy fn
+// have been removed.
+func RemoveIf(fn MultiArgFn, seq Seq) Seq {
+	if seq == nil {
+		return nil
+	}
+	vals := make([]interface{}, 0)
+	for cell := seq; cell != nil; cell = cell.Rest() {
+		val := cell.First()
+		if fn(val) == false {
+			vals = append(vals, val)
+		}
+	}
+	return Vector(vals...)
+}
+
+// RemoveIfNot returns a sequence from which elements that do not
+// satisfy fn have been removed.
+func RemoveIfNot(fn MultiArgFn, seq Seq) Seq {
+	if seq == nil {
+		return nil
+	}
+	vals := make([]interface{}, 0)
+	for cell := seq; cell != nil; cell = cell.Rest() {
+		val := cell.First()
+		if fn(val) != false {
+			vals = append(vals, val)
+		}
+	}
+	return Vector(vals...)
+}
+
+// Filter returns a sequence with elements that satisfy fn
+func Filter(fn MultiArgFn, seq Seq) Seq {
+    return RemoveIfNot(fn, seq)
+}

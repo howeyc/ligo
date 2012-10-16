@@ -12,8 +12,8 @@ import (
 func TestEquality(t *testing.T) {
 	list1 := List(1, 2, 3, 4, 5)
 	list2 := List(1, 2, 3, 4, 5)
-	vec1 := List(1, 2, 3, 4, 5)
-	vec2 := List(1, 2, 3, 4, 5)
+	vec1 := Vector(1, 2, 3, 4, 5)
+	vec2 := Vector(1, 2, 3, 4, 5)
 
 	if Equal(list1, list2) == false {
 		t.Fatalf("List equality failed!")
@@ -26,11 +26,21 @@ func TestEquality(t *testing.T) {
 	}
 }
 
+func TestAppend(t *testing.T) {
+	list1 := List(1, 2, 3)
+	list2 := List(1, 2, 3)
+	listapp := List(1, 2, 3, 1, 2, 3)
+
+	if Equal(Append(list1, list2), listapp) == false {
+		t.Fatalf("Append failed!")
+	}
+}
+
 func TestSubSeq(t *testing.T) {
 	list1 := List(1, 2, 3, 4, 5)
 	list2 := List(1, 2, 3)
-	vec1 := List(1, 2, 3, 4, 5)
-	vec2 := List(1, 2, 3)
+	vec1 := Vector(1, 2, 3, 4, 5)
+	vec2 := Vector(1, 2, 3)
 
 	if Equal(SubSeq(list1, 0, 3), list2) == false {
 		t.Fatalf("List SubSeq failed!")
@@ -69,8 +79,8 @@ func TestReduce(t *testing.T) {
 func TestMapCar(t *testing.T) {
 	list1 := List(3, 4, 5)
 	list2 := List(3, 4, 5)
-	vec1 := List(5, 4, 3)
-	vec2 := List(3, 5, 4)
+	vec1 := Vector(5, 4, 3)
+	vec2 := Vector(3, 5, 4)
 	if Reduce(intAdd, MapCar(intAdd, list1, list2)) != Reduce(intAdd, MapCar(intAdd, vec1, vec2)) {
 		t.Fatalf("MapCar failed!")
 	}

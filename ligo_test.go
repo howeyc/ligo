@@ -119,6 +119,23 @@ func TestReverse(t *testing.T) {
 	}
 }
 
+func TestAccessors(t *testing.T) {
+	list1 := List(3, 4, 5)
+	list2 := List(5, 4, 3)
+	if reflect.DeepEqual(Nth(list1, 0), Nth(list2, 2)) == false {
+		t.Fatalf("Nth failed!")
+	}
+	if reflect.DeepEqual(First(list1), Third(list2)) == false {
+		t.Fatalf("First, Third failed!")
+	}
+	if reflect.DeepEqual(Second(list1), Second(list2)) == false {
+		t.Fatalf("Second failed!")
+	}
+	if Fourth(list1) != nil {
+		t.Fatalf("Fourth failed!")
+	}
+}
+
 func TestSomeEvery(t *testing.T) {
 	list1 := List(4, 5, 9, 10)
 	list2 := List(4, 5, 8)

@@ -8,7 +8,6 @@ package ligo
 import (
 	"fmt"
 	"reflect"
-	"unsafe"
 )
 
 // Seq is the interface the specifies the basic functions of a sequence
@@ -29,18 +28,13 @@ func cons(val interface{}, rest Seq) Seq {
 	if rest == nil {
 		return consVector(val, nil)
 	}
-	vrest := reflect.ValueOf(rest).Elem()
-	restaddr := vrest.UnsafeAddr()
-	restptr := unsafe.Pointer(restaddr)
 
-	// Pair??
-	if vrest.Type().String() == "ligo.pair" {
-		return consPair(val, (*pair)(restptr))
-	}
-
-	// Vec??
-	if vrest.Type().String() == "ligo.vec" {
-		return consVector(val, (*vec)(restptr))
+	// Cons based on type
+	switch r := rest.(type) {
+	case *pair:
+		return consPair(val, r)
+	case *vec:
+		return consVector(val, r)
 	}
 
 	return nil
@@ -51,13 +45,11 @@ func ToSlice(seq Seq) []interface{} {
 	if seq == nil {
 		return nil
 	}
-	vseq := reflect.ValueOf(seq).Elem()
 
-	// Vec??
-	if vseq.Type().String() == "ligo.vec" {
-		vecaddr := vseq.UnsafeAddr()
-		vecptr := unsafe.Pointer(vecaddr)
-		return (*vec)(vecptr).slice()
+	// Vector slice
+	switch v := seq.(type) {
+	case *vec:
+		return v.slice()
 	}
 
 	vector := make([]interface{}, 0)
